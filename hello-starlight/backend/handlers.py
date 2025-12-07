@@ -1,182 +1,183 @@
 """
-Hello Starlight - Example Addon Backend
+Starlight Test Addon - Backend Handlers
 
-This module demonstrates how to create backend handlers for a Starlight addon. 
+This module provides the backend functionality for the test addon,
+including API endpoints and lifecycle hooks.
 """
 
+import json
 import logging
 from datetime import datetime
 from aiohttp import web
 
 logger = logging.getLogger(__name__)
 
-# Addon context will be injected by the addon loader
-addon_context = None
+# Global context reference (set by AddonLoader)
+_context = None
 
 
 def set_context(context):
-    """Called by addon loader to inject the addon context."""
-    global addon_context
-    addon_context = context
-    logger.info("Hello Starlight addon context initialized")
+    """
+    Set the addon context.
+    Called by AddonLoader when the module is loaded.
+    
+    Args:
+        context: AddonContext instance
+    """
+    global _context
+    _context = context
+    logger.info(f"Context set for addon: {context.addon_id}")
 
 
-# =============================================================================
+# ============================================================================
 # API Handlers
-# =============================================================================
+# ============================================================================
 
-async def get_greeting(request: web.Request) -> web.Response:
+async def get_status(request):
     """
-    Get the current greeting message.
+    Get the current status of the test addon.
     
-    GET /api/addon/hello-starlight/greeting
+    Returns:
+        JSON response with addon status information
+    """
+    # Load stored data if available
+    stats = {}
+    if _context:
+        stats = _context.load_data('stats.json', default={
+            'enable_count': 0,
+            'disable_count': 0,
+            'last_enabled': None
+        })
+    
+    return web.json_response({
+        'status': 'success',
+        'data': {
+            'addon_id': 'starlight-test-addon',
+            'version': '1.0.0',
+            'healthy': True,
+            'timestamp': datetime.now().isoformat(),
+            'message': 'Starlight Test Addon is running correctly! ',
+            'statistics': stats
+        }
+    })
+
+
+async def ping(request):
+    """
+    Simple ping endpoint to test connectivity.
+    
+    Returns:
+        JSON response with pong message
+    """
+    return web.json_response({
+        'status': 'success',
+        'data': {
+            'message': 'pong',
+            'timestamp': datetime.now().isoformat()
+        }
+    })
+
+
+async def echo(request):
+    """
+    Echo back any data sent in the request body.
+    
+    Returns:
+        JSON response with echoed data
     """
     try:
-        # Read from addon's persistent data storage
-        data = addon_context.read_data('settings. json') if addon_context else {}
-        greeting = data.get('greeting', 'Hello, Starlight!')
-        
-        # Track view count
-        stats = addon_context.read_data('stats.json') if addon_context else {}
-        stats['view_count'] = stats.get('view_count', 0) + 1
-        stats['last_viewed'] = datetime.now(). isoformat()
-        if addon_context:
-            addon_context.write_data('stats. json', stats)
-        
-        return web.json_response({
-            'status': 'success',
-            'greeting': greeting,
-            'timestamp': datetime.now(). isoformat()
-        })
-    except Exception as e:
-        logger.error(f"Error getting greeting: {e}")
+        body = await request.json()
+    except json.JSONDecodeError:
         return web.json_response({
             'status': 'error',
-            'message': str(e)
-        }, status=500)
-
-
-async def set_greeting(request: web.Request) -> web.Response:
-    """
-    Set a custom greeting message.
+            'message': 'Invalid JSON in request body'
+        }, status=400)
     
-    POST /api/addon/hello-starlight/greeting
-    Body: {"greeting": "Custom greeting message"}
-    """
-    try:
-        data = await request.json()
-        new_greeting = data. get('greeting', '').strip()
-        
-        if not new_greeting:
-            return web.json_response({
-                'status': 'error',
-                'message': 'Greeting cannot be empty'
-            }, status=400)
-        
-        if len(new_greeting) > 200:
-            return web.json_response({
-                'status': 'error',
-                'message': 'Greeting must be 200 characters or less'
-            }, status=400)
-        
-        # Save to addon's data storage
-        settings = addon_context. read_data('settings.json') if addon_context else {}
-        settings['greeting'] = new_greeting
-        settings['updated_at'] = datetime.now().isoformat()
-        
-        if addon_context:
-            addon_context.write_data('settings.json', settings)
-        
-        logger.info(f"Greeting updated to: {new_greeting}")
-        
-        return web.json_response({
-            'status': 'success',
-            'message': 'Greeting updated successfully',
-            'greeting': new_greeting
-        })
-    except Exception as e:
-        logger.error(f"Error setting greeting: {e}")
-        return web.json_response({
-            'status': 'error',
-            'message': str(e)
-        }, status=500)
+    return web.json_response({
+        'status': 'success',
+        'data': {
+            'echoed': body,
+            'timestamp': datetime.now().isoformat()
+        }
+    })
 
 
-async def get_stats(request: web.Request) -> web.Response:
-    """
-    Get addon usage statistics.
-    
-    GET /api/addon/hello-starlight/stats
-    """
-    try:
-        stats = addon_context.read_data('stats.json') if addon_context else {}
-        
-        return web.json_response({
-            'status': 'success',
-            'stats': {
-                'view_count': stats.get('view_count', 0),
-                'last_viewed': stats.get('last_viewed'),
-                'installed_at': stats.get('installed_at'),
-                'enabled_count': stats.get('enabled_count', 0)
-            }
-        })
-    except Exception as e:
-        logger.error(f"Error getting stats: {e}")
-        return web. json_response({
-            'status': 'error',
-            'message': str(e)
-        }, status=500)
-
-
-# =============================================================================
+# ============================================================================
 # Lifecycle Hooks
-# =============================================================================
+# ============================================================================
 
-async def on_install(context):
-    """Called when the addon is first installed."""
-    logger.info("Hello Starlight addon installed!")
+def on_install(context):
+    """
+    Called when the addon is installed.
     
-    # Initialize default data
-    context.write_data('settings.json', {
-        'greeting': 'Hello, Starlight!',
-        'created_at': datetime. now().isoformat()
+    Args:
+        context: AddonContext instance
+    """
+    context.log_info("Starlight Test Addon installed successfully")
+    
+    # Initialize addon data
+    context.save_data('stats.json', {
+        'enable_count': 0,
+        'disable_count': 0,
+        'install_date': datetime.now().isoformat(),
+        'last_enabled': None
     })
     
-    context.write_data('stats.json', {
-        'installed_at': datetime. now().isoformat(),
-        'view_count': 0,
-        'enabled_count': 0
+    context.log_info("Initial data saved to stats.json")
+
+
+def on_uninstall(context):
+    """
+    Called when the addon is uninstalled.
+    
+    Args:
+        context: AddonContext instance
+    """
+    context.log_info("Starlight Test Addon uninstalling...")
+    
+    # Clean up addon data
+    context.delete_data('stats.json')
+    
+    context.log_info("Starlight Test Addon uninstalled and data cleaned up")
+
+
+def on_enable(context):
+    """
+    Called when the addon is enabled.
+    
+    Args:
+        context: AddonContext instance
+    """
+    context.log_info("Starlight Test Addon enabled")
+    
+    # Update enable statistics
+    stats = context.load_data('stats.json', default={
+        'enable_count': 0,
+        'disable_count': 0
     })
-    
-    return {'status': 'success', 'message': 'Hello Starlight installed successfully'}
-
-
-async def on_enable(context):
-    """Called when the addon is enabled."""
-    logger. info("Hello Starlight addon enabled!")
-    
-    # Track enable count
-    stats = context.read_data('stats.json') or {}
-    stats['enabled_count'] = stats.get('enabled_count', 0) + 1
+    stats['enable_count'] = stats.get('enable_count', 0) + 1
     stats['last_enabled'] = datetime.now().isoformat()
-    context.write_data('stats.json', stats)
+    context.save_data('stats.json', stats)
     
-    return {'status': 'success'}
+    context.log_info(f"Enable count updated to {stats['enable_count']}")
 
 
-async def on_disable(context):
-    """Called when the addon is disabled."""
-    logger.info("Hello Starlight addon disabled!")
+def on_disable(context):
+    """
+    Called when the addon is disabled.
     
-    stats = context.read_data('stats.json') or {}
+    Args:
+        context: AddonContext instance
+    """
+    context.log_info("Starlight Test Addon disabled")
+    
+    # Update disable statistics
+    stats = context.load_data('stats.json', default={
+        'enable_count': 0,
+        'disable_count': 0
+    })
+    stats['disable_count'] = stats.get('disable_count', 0) + 1
     stats['last_disabled'] = datetime.now().isoformat()
-    context.write_data('stats.json', stats)
+    context.save_data('stats.json', stats)
     
-    return {'status': 'success'}
-
-
-async def on_uninstall(context):
-    """Called when the addon is uninstalled."""
-    logger. info("Hello Starlight addon uninstalling - goodbye!")
-    # Data folder will be cleaned up automatically by the addon manager
-    return {'status': 'success', 'message': 'Goodbye!'}
+    context.log_info(f"Disable count updated to {stats['disable_count']}")

@@ -1,0 +1,181 @@
+/**
+ * Starlight Test Addon - Styles
+ */
+
+/* Container */
+.test-addon-container {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.test-addon-container h2 {
+    color: var(--text-primary, #e0e0e0);
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+}
+
+.test-addon-container p {
+    color: var(--text-secondary, #a0a0a0);
+    margin-bottom: 20px;
+}
+
+/* Cards */
+.test-addon-card {
+    background: var(--card-bg, #1e1e2e);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color, #333);
+}
+
+.test-addon-card h3 {
+    color: var(--text-primary, #e0e0e0);
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.test-addon-card h3 i {
+    color: var(--accent-color, #7c3aed);
+}
+
+/* Status Display */
+#test-addon-status {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.test-addon-status-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: var(--input-bg, #2a2a3e);
+    border-radius: 4px;
+}
+
+.test-addon-status-item .label {
+    color: var(--text-secondary, #a0a0a0);
+    font-weight: 500;
+}
+
+.test-addon-status-item .value {
+    color: var(--text-primary, #e0e0e0);
+}
+
+.test-addon-status-item .value.healthy {
+    color: var(--success-color, #10b981);
+}
+
+.test-addon-status-item .value.unhealthy {
+    color: var(--error-color, #ef4444);
+}
+
+/* Buttons */
+.test-addon-btn {
+    background: var(--accent-color, #7c3aed);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.test-addon-btn:hover {
+    background: var(--accent-hover, #6d28d9);
+}
+
+.test-addon-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.test-addon-btn-secondary {
+    background: var(--input-bg, #2a2a3e);
+    border: 1px solid var(--border-color, #333);
+}
+
+.test-addon-btn-secondary:hover {
+    background: var(--hover-bg, #333);
+}
+
+/* Input */
+.test-addon-input {
+    width: 100%;
+    padding: 10px 12px;
+    background: var(--input-bg, #2a2a3e);
+    border: 1px solid var(--border-color, #333);
+    border-radius: 6px;
+    color: var(--text-primary, #e0e0e0);
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+.test-addon-input:focus {
+    outline: none;
+    border-color: var(--accent-color, #7c3aed);
+}
+
+/* Results */
+.test-addon-result {
+    margin-top: 15px;
+    padding: 12px;
+    background: var(--input-bg, #2a2a3e);
+    border-radius: 6px;
+    display: none;
+}
+
+.test-addon-result.visible {
+    display: block;
+}
+
+.test-addon-success {
+    color: var(--success-color, #10b981);
+    font-weight: 500;
+}
+
+.test-addon-error {
+    color: var(--error-color, #ef4444);
+    font-weight: 500;
+}
+
+.test-addon-latency {
+    color: var(--text-secondary, #a0a0a0);
+    margin-left: 15px;
+    font-size: 0.85rem;
+}
+
+.test-addon-json {
+    margin-top: 10px;
+    padding: 10px;
+    background: var(--code-bg, #1a1a2e);
+    border-radius: 4px;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.8rem;
+    overflow-x: auto;
+    color: var(--text-primary, #e0e0e0);
+}
+
+/* Button group */
+.test-addon-button-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Test sections */
+.test-addon-section {
+    margin-bottom: 15px;
+}
+
+.test-addon-section:last-child {
+    margin-bottom: 0;
+}
