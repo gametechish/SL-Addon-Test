@@ -1,14 +1,18 @@
 {
-  "name": "My Addon Repository",
+  "name": "Starlight Repository",
+  "version": "2.0",
   "apps": [
     {
-      "name": "Hello Starlight",
       "type": "addon",
-      "description": "Example addon demonstrating the addon system",
+      "name": "Hello Starlight",
+      "id": "hello-starlight",
+      "description": "An example addon",
+      "summary": "An example addon",
+      "tags": ["addon", "example"],
       "version": "1. 0.0",
       "author": "Starlight Team",
       "icon": "https://your-server.com/addons/hello-starlight/icon.png",
-      "addon_manifest_url": "https://your-server.com/addons/hello-starlight/manifest.json"
+      "addon_manifest_url": "https://github.com/gametechish/SL-Addon-Test/raw/refs/heads/main/manifest.json"
     }
   ]
 }
