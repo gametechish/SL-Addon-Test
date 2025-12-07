@@ -1,0 +1,67 @@
+{
+  "id": "hello-starlight",
+  "name": "Hello Starlight",
+  "version": "1.0.0",
+  "description": "A simple example addon that demonstrates the Starlight addon system capabilities.",
+  "author": "Starlight Team",
+  "license": "MIT",
+  "min_starlight_version": "1.0.0",
+  "permissions": [],
+
+  "frontend": {
+    "js": ["frontend/js/hello.js"],
+    "css": ["frontend/css/hello. css"],
+    "init_function": "HelloStarlight.init"
+  },
+
+  "backend": {
+    "module": "backend/handlers. py",
+    "routes": [
+      {
+        "method": "GET",
+        "path": "/api/addon/hello-starlight/greeting",
+        "handler": "get_greeting"
+      },
+      {
+        "method": "POST",
+        "path": "/api/addon/hello-starlight/greeting",
+        "handler": "set_greeting"
+      },
+      {
+        "method": "GET",
+        "path": "/api/addon/hello-starlight/stats",
+        "handler": "get_stats"
+      }
+    ]
+  },
+
+  "hooks": {
+    "sidebar": [
+      {
+        "label": "Hello",
+        "icon": "star",
+        "page": "main",
+        "position": "main",
+        "order": 99
+      }
+    ],
+    "pages": [
+      {
+        "id": "main",
+        "title": "Hello Starlight",
+        "template": "frontend/pages/main.html"
+      }
+    ],
+    "settings": {
+      "section_title": "Hello Starlight Settings",
+      "template": "frontend/pages/settings.html"
+    }
+  },
+
+  "lifecycle": {
+    "on_install": "backend/handlers.py:on_install",
+    "on_enable": "backend/handlers. py:on_enable",
+    "on_disable": "backend/handlers.py:on_disable",
+    "on_uninstall": "backend/handlers.py:on_uninstall"
+  }
+}

@@ -1,0 +1,55 @@
+<div class="space-y-4">
+    <div class="settings-option flex items-center justify-between p-4 rounded-lg" 
+         style="background-color: var(--bg-tertiary);">
+        <div>
+            <h4 class="font-medium" style="color: var(--text-primary);">Current Greeting</h4>
+            <p class="text-sm" style="color: var(--text-tertiary);">
+                The message shown on the Hello Starlight page
+            </p>
+        </div>
+        <div id="hello-settings-greeting" class="text-sm font-mono px-3 py-1 rounded" 
+             style="background-color: var(--bg-secondary); color: var(--text-secondary);">
+            Loading...
+        </div>
+    </div>
+    
+    <div class="settings-option flex items-center justify-between p-4 rounded-lg"
+         style="background-color: var(--bg-tertiary);">
+        <div>
+            <h4 class="font-medium" style="color: var(--text-primary);">Reset to Default</h4>
+            <p class="text-sm" style="color: var(--text-tertiary);">
+                Reset the greeting to "Hello, Starlight!"
+            </p>
+        </div>
+        <button onclick="HelloStarlightSettings.resetGreeting()"
+                class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm rounded-lg transition">
+            Reset
+        </button>
+    </div>
+</div>
+
+<script>
+(function() {
+    window.HelloStarlightSettings = {
+        async load() {
+            const result = await window.API.apiCall('/addon/hello-starlight/greeting');
+            if (result && result.status === 'success') {
+                document.getElementById('hello-settings-greeting').textContent = result.greeting;
+            }
+        },
+        
+        async resetGreeting() {
+            const result = await window.API. apiCall('/addon/hello-starlight/greeting', 'POST', {
+                greeting: 'Hello, Starlight!'
+            });
+            if (result && result. status === 'success') {
+                document.getElementById('hello-settings-greeting').textContent = 'Hello, Starlight! ';
+                window.UI.showStatus('Greeting reset to default', 'success');
+            }
+        }
+    };
+    
+    // Load on init
+    HelloStarlightSettings. load();
+})();
+</script>
