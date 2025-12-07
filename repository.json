@@ -12,7 +12,7 @@
       "version": "1. 0.0",
       "author": "Starlight Team",
       "icon": "https://your-server.com/addons/hello-starlight/icon.png",
-      "addon_manifest_url": "https://github.com/gametechish/SL-Addon-Test/raw/refs/heads/main/manifest.json"
+      "addon_manifest_url": "https://github.com/gametechish/SL-Addon-Test/raw/refs/heads/main/releases/hello-starlight/manifest.json"
     }
   ]
 }
